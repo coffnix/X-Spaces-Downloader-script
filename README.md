@@ -45,3 +45,5 @@ The script generates a final audio file with a name based on:
 - Requires access to the Space via your browser cookies, currently using Opera
 - Make sure you are logged in if the Space is restricted
 - Temporary files are automatically cleaned after execution
+- Forked from: https://gist.github.com/rodrigopolo/40029718a85963399784ae35b06adcaf
+
