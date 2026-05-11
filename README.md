@@ -40,6 +40,12 @@ The script generates a final audio file with a name based on:
 - title
 - id
 
+
+## Build app (macOS)
+```
+bash -x build_macos.sh
+```
+
 ## Create DMG:
 ```
 create-dmg \
