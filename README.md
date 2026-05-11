@@ -46,18 +46,6 @@ The script generates a final audio file with a name based on:
 bash -x build_macos.sh
 ```
 
-## Create DMG:
-```
-create-dmg \
-  --volname "X-Spaces-Downloader" \
-  --window-pos 200 120 \
-  --window-size 800 400 \
-  --icon-size 110 \
-  --icon "X-Spaces-Downloader.app" 200 190 \
-  --app-drop-link 600 190 \
-  "X-Spaces-Downloader Installer.dmg" \
-  "X-Spaces-Downloader.app"
-  ```
 
 ## ⚠️ Notes
 
