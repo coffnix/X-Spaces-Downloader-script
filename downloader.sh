@@ -24,13 +24,13 @@ IFS=$'\t\n'
 
 SPACEURL="$1"
 
-STREAM="$(yt-dlp --cookies-from-browser opera -g "$SPACEURL")"
+STREAM="$(yt-dlp -g "$SPACEURL")"
 if [ -z "$STREAM" ]; then
 	echo "Failed to get stream URL."
 	exit 1
 fi
 
-FILE_NAME="$(yt-dlp --cookies-from-browser opera --get-filename -o "%(upload_date)s - %(uploader_id)s.%(title)s.%(id)s.%(ext)s" "$SPACEURL")"
+FILE_NAME="$(yt-dlp --get-filename -o "%(upload_date)s - %(uploader_id)s.%(title)s.%(id)s.%(ext)s" "$SPACEURL")"
 if [ -z "$FILE_NAME" ]; then
 	echo "Failed to get output filename."
 	exit 1
@@ -73,3 +73,6 @@ grep -Eo '(^[^.#]+\.aac$)' stream.m3u8 | while IFS= read -r chunk; do
 done
 
 rm -f stream.m3u8 modified.m3u8
+
+echo "🎵 Converting to MP3..."
+ffmpeg -i "$FILE_NAME" "${FILE_NAME%.*}.mp3"
