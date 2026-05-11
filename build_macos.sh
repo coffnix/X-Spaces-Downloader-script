@@ -131,15 +131,18 @@ sips -z 256 256   icon.png --out /tmp/xspaces.iconset/icon_128x128@2x.png
 sips -z 256 256   icon.png --out /tmp/xspaces.iconset/icon_256x256.png
 sips -z 512 512   icon.png --out /tmp/xspaces.iconset/icon_256x256@2x.png
 sips -z 512 512   icon.png --out /tmp/xspaces.iconset/icon_512x512.png
-cp icon.png /tmp/xspaces.iconset/icon_512x512@2x.png
+sips -z 1024 1024 icon.png --out /tmp/xspaces.iconset/icon_512x512@2x.png
 
 iconutil -c icns /tmp/xspaces.iconset
 
-cp /tmp/xspaces.icns X-Spaces-Downloader.app/Contents/Resources/AppIcon.icns
+cp /tmp/xspaces.icns X-Spaces-Downloader.app/Contents/Resources/X-Spaces-Downloader.icns
+
 plutil -convert xml1 X-Spaces-Downloader.app/Contents/Info.plist
 
-/usr/libexec/PlistBuddy -c "Set :CFBundleIconFile AppIcon" X-Spaces-Downloader.app/Contents/Info.plist 2>/dev/null || \
-/usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" X-Spaces-Downloader.app/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Delete :CFBundleIconName" X-Spaces-Downloader.app/Contents/Info.plist 2>/dev/null || true
+
+/usr/libexec/PlistBuddy -c "Set :CFBundleIconFile X-Spaces-Downloader" X-Spaces-Downloader.app/Contents/Info.plist 2>/dev/null || \
+/usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string X-Spaces-Downloader" X-Spaces-Downloader.app/Contents/Info.plist
 
 plutil -convert binary1 X-Spaces-Downloader.app/Contents/Info.plist
 
@@ -170,7 +173,7 @@ create-dmg \
   --volname "X-Spaces-Downloader" \
   --window-pos 200 120 \
   --window-size 800 400 \
-  --icon-size 110 \
+  --volicon /tmp/xspaces.icns \
   --icon "X-Spaces-Downloader.app" 200 190 \
   --app-drop-link 600 190 \
   "X-Spaces-Downloader Installer.dmg" \
