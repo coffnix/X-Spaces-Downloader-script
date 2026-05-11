@@ -6,6 +6,8 @@
 
 set -e
 
+rm -rf 'X-Spaces-Downloader Installer.dmg' X-Spaces-Downloader.app
+
 APP_NAME="X-Spaces-Downloader"
 VERSION="1.4"
 ORIGINAL_SCRIPT="downloader.sh"
@@ -116,3 +118,60 @@ echo ""
 echo "🎉 BUILD CONCLUÍDO!"
 echo "App: $APP_NAME.app"
 echo "Teste novamente."
+
+rm -rf /tmp/xspaces.iconset
+mkdir -p /tmp/xspaces.iconset
+
+sips -z 16 16     icon.png --out /tmp/xspaces.iconset/icon_16x16.png
+sips -z 32 32     icon.png --out /tmp/xspaces.iconset/icon_16x16@2x.png
+sips -z 32 32     icon.png --out /tmp/xspaces.iconset/icon_32x32.png
+sips -z 64 64     icon.png --out /tmp/xspaces.iconset/icon_32x32@2x.png
+sips -z 128 128   icon.png --out /tmp/xspaces.iconset/icon_128x128.png
+sips -z 256 256   icon.png --out /tmp/xspaces.iconset/icon_128x128@2x.png
+sips -z 256 256   icon.png --out /tmp/xspaces.iconset/icon_256x256.png
+sips -z 512 512   icon.png --out /tmp/xspaces.iconset/icon_256x256@2x.png
+sips -z 512 512   icon.png --out /tmp/xspaces.iconset/icon_512x512.png
+cp icon.png /tmp/xspaces.iconset/icon_512x512@2x.png
+
+iconutil -c icns /tmp/xspaces.iconset
+
+cp /tmp/xspaces.icns X-Spaces-Downloader.app/Contents/Resources/AppIcon.icns
+plutil -convert xml1 X-Spaces-Downloader.app/Contents/Info.plist
+
+/usr/libexec/PlistBuddy -c "Set :CFBundleIconFile AppIcon" X-Spaces-Downloader.app/Contents/Info.plist 2>/dev/null || \
+/usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" X-Spaces-Downloader.app/Contents/Info.plist
+
+plutil -convert binary1 X-Spaces-Downloader.app/Contents/Info.plist
+
+APP="X-Spaces-Downloader.app"
+
+#killall X-Spaces-Downloader 2>/dev/null
+
+xattr -cr "$APP"
+
+rm -rf "$APP/Contents/_CodeSignature"
+
+find "$APP/Contents" -type f -perm +111 -exec codesign --remove-signature {} \; 2>/dev/null
+
+codesign --force --sign - "$APP/Contents/Resources/bin/wget"
+codesign --force --sign - "$APP/Contents/Resources/bin/ffmpeg"
+codesign --force --sign - "$APP/Contents/Resources/bin/aria2c"
+codesign --force --sign - "$APP/Contents/Resources/bin/yt-dlp"
+codesign --force --sign - "$APP/Contents/MacOS/X-Spaces-Downloader"
+
+codesign --force --deep --sign - "$APP"
+
+codesign --verify --deep --strict --verbose=4 "$APP"
+spctl --assess --type execute --verbose=4 "$APP" || true
+
+touch "$APP"
+
+create-dmg \
+  --volname "X-Spaces-Downloader" \
+  --window-pos 200 120 \
+  --window-size 800 400 \
+  --icon-size 110 \
+  --icon "X-Spaces-Downloader.app" 200 190 \
+  --app-drop-link 600 190 \
+  "X-Spaces-Downloader Installer.dmg" \
+  "X-Spaces-Downloader.app"
